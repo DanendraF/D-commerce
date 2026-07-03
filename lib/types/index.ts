@@ -353,24 +353,6 @@ export interface CheckoutState {
 export type CheckoutStep = 'address' | 'shipping' | 'payment' | 'review';
 
 // ============================================
-// Review Types
-// ============================================
-
-export interface Review {
-  id: string;
-  productId: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  title?: string;
-  comment: string;
-  images?: string[];
-  isVerifiedPurchase: boolean;
-  helpfulCount: number;
-  createdAt: string;
-}
-
-// ============================================
 // Banner/Promo Types
 // ============================================
 

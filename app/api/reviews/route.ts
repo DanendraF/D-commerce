@@ -16,9 +16,16 @@ export async function GET(req: Request) {
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    const mappedData = data?.map((r: any) => ({
+      id: r.id,
+      productId: r.product_id,
+      userId: r.user_id,
+      rating: r.rating,
+      comment: r.comment,
+      createdAt: r.created_at,
+    }));
 
-    return NextResponse.json(data);
+    return NextResponse.json(mappedData);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -57,9 +64,16 @@ export async function POST(req: Request) {
       .select()
       .single();
 
-    if (error) throw error;
+    const mappedNewReview = data ? {
+      id: data.id,
+      productId: data.product_id,
+      userId: data.user_id,
+      rating: data.rating,
+      comment: data.comment,
+      createdAt: data.created_at,
+    } : null;
 
-    return NextResponse.json(data);
+    return NextResponse.json(mappedNewReview);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
