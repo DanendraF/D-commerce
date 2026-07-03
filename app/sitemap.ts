@@ -6,7 +6,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dcommerce-store.vercel.app';
 
   // Fetch all products from Odoo
-  const products = await api.getProducts();
+  const result = await api.getProducts();
+  const products = result.data || [];
 
   const productUrls = products.map((product) => ({
     url: `${baseUrl}/product/${product.slug}`,
