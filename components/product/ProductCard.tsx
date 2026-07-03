@@ -4,7 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/lib/types';
 import { formatPrice } from '@/lib/mock-data';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { useWishlistStore } from '@/lib/store';
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +17,17 @@ interface ProductCardProps {
 export function ProductCard({ product, className, showQuickAdd = false }: ProductCardProps) {
   const primaryImage = product.images.find(img => img.isPrimary) || product.images[0];
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
+
+  const addItem = useWishlistStore((state) => state.addItem);
+  const removeItem = useWishlistStore((state) => state.removeItem);
+  const isInWishlist = useWishlistStore((state) => state.isInWishlist);
+  
+  // Need to handle hydration mismatch by rendering default false on server
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  
+  useEffect(() => {
+    setIsWishlisted(isInWishlist(product.id));
+  }, [isInWishlist, product.id]);
 
   return (
     <Link
@@ -63,6 +76,29 @@ export function ProductCard({ product, className, showQuickAdd = false }: Produc
             </button>
           </div>
         )}
+
+        {/* Wishlist Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            if (isWishlisted) {
+              removeItem(product.id);
+            } else {
+              addItem(product);
+            }
+          }}
+          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
+        >
+          <svg
+            className={cn('h-4 w-4 transition-colors', isWishlisted ? 'fill-maroon-600 text-maroon-600' : 'text-gray-600')}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isWishlisted ? "0" : "1.5"} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            {isWishlisted && <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 22.828l-8.828-8.829a4 4 0 010-5.656z" clipRule="evenodd" />}
+          </svg>
+        </button>
       </div>
 
       {/* Product Info */}

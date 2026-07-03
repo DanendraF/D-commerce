@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { api } from '@/lib/api';
 import { ProductCard } from '@/components/product';
 import { LayoutClient } from '@/components/layout/LayoutClient';
-import { Container, FadeIn } from '@/components/shared';
+import { Container, FadeIn, ShopFilters } from '@/components/shared';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -11,8 +11,15 @@ export const metadata: Metadata = {
   description: 'Browse all products from D\'commerce premium fashion collection.',
 };
 
-export default async function ShopPage() {
-  const products = await api.getProducts({ limit: 24 });
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const q = typeof searchParams.q === 'string' ? searchParams.q : undefined;
+  const sort = typeof searchParams.sort === 'string' ? (searchParams.sort as any) : undefined;
+
+  const products = await api.getProducts({ limit: 24, search: q, sortBy: sort });
   const categories = await api.getCategories();
 
   return (
@@ -57,12 +64,19 @@ export default async function ShopPage() {
       {/* Products Grid */}
       <section className="py-12 lg:py-16">
         <Container>
+          <ShopFilters />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-            {products.data.map((product, idx) => (
-              <FadeIn key={product.id} delay={idx * 50}>
-                <ProductCard product={product} />
-              </FadeIn>
-            ))}
+            {products.data.length > 0 ? (
+              products.data.map((product, idx) => (
+                <FadeIn key={product.id} delay={idx * 50}>
+                  <ProductCard product={product} />
+                </FadeIn>
+              ))
+            ) : (
+              <div className="col-span-full py-20 text-center text-muted-foreground">
+                No products found matching your search.
+              </div>
+            )}
           </div>
 
           {/* Load More */}

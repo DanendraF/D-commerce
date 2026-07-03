@@ -7,10 +7,10 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { Product, ProductVariant } from '@/lib/types';
 import { formatPrice } from '@/lib/mock-data';
-import { ProductCard, ProductCardSkeleton } from '@/components/product';
+import { ProductCard, ProductCardSkeleton, ProductReviews } from '@/components/product';
 import { LayoutClient } from '@/components/layout/LayoutClient';
 import { Container, FadeIn } from '@/components/shared';
-import { useCartStore, useUIStore } from '@/lib/store';
+import { useCartStore, useUIStore, useWishlistStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { Heart, Share, Truck, RotateCcw, ShieldCheck, ChevronRight, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
@@ -27,8 +27,12 @@ export default function ProductDetailPage() {
   const [isZoomed, setIsZoomed] = useState(false);
   const router = useRouter();
 
-  const { addItem, clearCart } = useCartStore();
+  const { addItem: addCartItem, clearCart } = useCartStore();
   const { toggleCart } = useUIStore();
+  
+  const addItem = useWishlistStore((state) => state.addItem);
+  const removeItem = useWishlistStore((state) => state.removeItem);
+  const isInWishlist = useWishlistStore((state) => state.isInWishlist);
 
   useEffect(() => {
     async function fetchData() {
@@ -64,7 +68,7 @@ export default function ProductDetailPage() {
   const addToCart = () => {
     if (!product || !selectedVariant) return;
 
-    addItem(product, selectedVariant, quantity);
+    addCartItem(product, selectedVariant, quantity);
     toast.success('Added to cart', {
       description: `${product.name} (${selectedVariant.name}) x${quantity}`,
       action: {
@@ -77,7 +81,7 @@ export default function ProductDetailPage() {
   const buyNow = () => {
     if (!product || !selectedVariant) return;
     clearCart();
-    addItem(product, selectedVariant, quantity);
+    addCartItem(product, selectedVariant, quantity);
     router.push('/checkout');
   };
 
@@ -317,8 +321,20 @@ export default function ProductDetailPage() {
               >
                 Buy Now
               </button>
-              <button className="border px-4 py-4 text-lg transition-colors hover:bg-muted hidden sm:block">
-                <Heart className="h-5 w-5" />
+              <button
+                onClick={() => {
+                  if (isInWishlist(product.id)) {
+                    removeItem(product.id);
+                  } else {
+                    addItem(product);
+                  }
+                }}
+                className={cn(
+                  "border px-4 py-4 text-lg transition-colors hover:bg-muted hidden sm:block",
+                  isInWishlist(product.id) ? "text-maroon-600" : "text-foreground"
+                )}
+              >
+                <Heart className="h-5 w-5" fill={isInWishlist(product.id) ? "currentColor" : "none"} />
               </button>
             </div>
 
@@ -368,6 +384,9 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+        
+        {/* Customer Reviews Section */}
+        <ProductReviews productId={product.id} />
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (

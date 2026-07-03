@@ -320,6 +320,33 @@ class HybridDataSource implements DataSource {
         );
       }
 
+      // Apply sorting
+      switch (filters?.sortBy) {
+        case 'price_asc':
+          filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'price_desc':
+          filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'name_asc':
+          filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name_desc':
+          filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case 'newest':
+          filteredProducts.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          break;
+        case 'rating':
+          filteredProducts.sort((a, b) => b.rating - a.rating);
+          break;
+        case 'bestselling':
+        default:
+          break;
+      }
+
       // Pagination
       const page = filters?.page || 1;
       const limit = filters?.limit || 12;

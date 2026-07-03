@@ -314,8 +314,15 @@ export default async function HomePage() {
           </FadeIn>
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-6">
-            {[6311390, 1457986, 2681252, 4210866, 1536619, 4544158].map((id, idx) => (
-              <FadeIn key={id} delay={idx * 50}>
+            {[
+              'https://images.pexels.com/photos/6311390/pexels-photo-6311390.jpeg',
+              'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80',
+              'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80',
+              'https://images.pexels.com/photos/4210866/pexels-photo-4210866.jpeg',
+              'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg',
+              'https://images.pexels.com/photos/4544158/pexels-photo-4544158.jpeg'
+            ].map((url, idx) => (
+              <FadeIn key={idx} delay={idx * 50}>
                 <Link
                   href="https://instagram.com"
                   target="_blank"
@@ -323,7 +330,7 @@ export default async function HomePage() {
                   className="group relative block aspect-square overflow-hidden"
                 >
                   <Image
-                    src={`https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg`}
+                    src={url}
                     alt="Instagram post"
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"

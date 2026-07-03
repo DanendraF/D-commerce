@@ -100,7 +100,7 @@ const FALLBACK_IMAGES: Record<string, string[]> = {
   bottoms: ['https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg', 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg'],
   outerwear: ['https://images.pexels.com/photos/4210866/pexels-photo-4210866.jpeg', 'https://images.pexels.com/photos/6311390/pexels-photo-6311390.jpeg'],
   dresses: ['https://images.pexels.com/photos/2681252/pexels-photo-2681252.jpeg', 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg'],
-  accessories: ['https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg'],
+  accessories: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80'],
   bags: ['https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg', 'https://images.pexels.com/photos/1457986/pexels-photo-1457986.jpeg'],
   default: ['https://images.pexels.com/photos/6311390/pexels-photo-6311390.jpeg']
 };

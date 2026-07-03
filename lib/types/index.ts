@@ -27,8 +27,18 @@ export interface Product {
   brand: string;
   material?: string;
   careInstructions?: string;
+  reviews?: Review[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
 }
 
 export interface ProductImage {
