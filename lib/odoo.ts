@@ -67,7 +67,7 @@ export async function odooCall(model: string, method: string, args: any[], kwarg
       },
       id: generateId(),
     }),
-    cache: 'no-store', // Disable cache for real-time data by default
+    next: { revalidate: 3600 }, // Cache Odoo RPC responses for 1 hour to improve performance
   });
 
   const data = await response.json();

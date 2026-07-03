@@ -59,8 +59,8 @@ export interface DataSource {
 
 class MockDataSource implements DataSource {
   // Simulate network delay
-  private delay(ms: number = 300): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private delay(ms: number = 0): Promise<void> {
+    return Promise.resolve();
   }
 
   async getProducts(filters?: ProductFilters): Promise<PaginatedResult<Product>> {
