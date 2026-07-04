@@ -73,6 +73,9 @@ export async function POST(req: Request) {
           postal_code: cleanPostal,
           country_code: 'IDN'
         }
+      },
+      callbacks: {
+        finish: `${req.headers.get('origin') || 'https://d-commerce-amber.vercel.app'}/checkout/success`
       }
     };
 

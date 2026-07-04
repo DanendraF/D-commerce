@@ -14,18 +14,19 @@ export async function POST(req: Request) {
     const transactionStatus = statusResponse.transaction_status;
     const fraudStatus = statusResponse.fraud_status;
 
-    // We expect order_id to be something like "SO-45" or "SO0012"
-    // We need the numeric ID for Odoo. E.g. "SO-45" -> 45
-    let odooId = 0;
-    const match = orderId.match(/\d+/);
-    if (match) {
-      odooId = parseInt(match[0], 10);
-    }
+    // Fetch the correct Odoo internal ID from our Supabase DB
+    const { data: orderData, error: dbError } = await supabase
+      .from('orders')
+      .select('odoo_order_id')
+      .eq('odoo_order_number', orderId)
+      .single();
 
-    if (odooId === 0) {
-      console.error(`Invalid Order ID format from Midtrans: ${orderId}`);
+    if (dbError || !orderData) {
+      console.error(`Order not found in DB for Midtrans order_id: ${orderId}`);
       return NextResponse.json({ status: 'ignored' }, { status: 200 });
     }
+
+    const odooId = orderData.odoo_order_id;
 
     if (transactionStatus === 'capture') {
       if (fraudStatus === 'challenge') {
