@@ -76,7 +76,8 @@ export async function POST(req: Request) {
       },
       callbacks: {
         finish: `${req.headers.get('origin') || 'https://d-commerce-amber.vercel.app'}/checkout/success`
-      }
+      },
+      custom_field1: odooOrder.orderId.toString()
     };
 
     // 4. Create Transaction Token from Midtrans

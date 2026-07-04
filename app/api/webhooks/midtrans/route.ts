@@ -21,19 +21,23 @@ export async function POST(req: Request) {
     const transactionStatus = statusResponse.transaction_status;
     const fraudStatus = statusResponse.fraud_status;
 
-    // Fetch the correct Odoo internal ID from our Supabase DB
-    const { data: orderData, error: dbError } = await supabaseAdmin
-      .from('orders')
-      .select('odoo_order_id')
-      .eq('odoo_order_number', orderId)
-      .single();
+    // Get internal Odoo ID from custom_field1, otherwise fallback to Supabase query
+    let odooId = statusResponse.custom_field1 ? parseInt(statusResponse.custom_field1, 10) : 0;
 
-    if (dbError || !orderData) {
-      console.error(`Order not found in DB for Midtrans order_id: ${orderId}`);
-      return NextResponse.json({ status: 'ignored' }, { status: 200 });
+    if (!odooId) {
+      // Fallback: Fetch the correct Odoo internal ID from our Supabase DB
+      const { data: orderData, error: dbError } = await supabaseAdmin
+        .from('orders')
+        .select('odoo_order_id')
+        .eq('odoo_order_number', orderId)
+        .single();
+
+      if (dbError || !orderData) {
+        console.error(`Order not found in DB for Midtrans order_id: ${orderId}`);
+        return NextResponse.json({ status: 'ignored' }, { status: 200 });
+      }
+      odooId = orderData.odoo_order_id;
     }
-
-    const odooId = orderData.odoo_order_id;
 
     if (transactionStatus === 'capture') {
       if (fraudStatus === 'challenge') {
